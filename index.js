@@ -1,27 +1,34 @@
+const form = document.getElementById('joke-form')
+const jokeList = document.getElementById('joke-list')
+const nameInput = document.getElementById('name-input')
+
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('joke-form')
-  const jokeList = document.getElementById('joke-list')
-  const newJokeLi = document.createElement('li')
-  const username = document.getElementById('name-input').value
-  let joke;
+  form.addEventListener('submit', (event) => createJoke(event));
+});
 
-  function fetchJoke(){
-    fetch('https://icanhazdadjoke.com/', {
-      headers: {
-        "Accept": "application/json"
-      }
-    })
-    .then(res => res.json())
-    .then(jokeData => joke = jokeData.joke)
-  }
+function createJoke() {
+  event.preventDefault();
 
-  form.addEventListener('submit', (event) => {
+  const username = nameInput.value
+  if(username === "") return;
+  fetchJoke()
+}
 
-    if(username === "") return;
-    fetchJoke()
-    newJokeLi.innerHTML = `
-    <span class="username">${username} says:</span> ${joke}
-    `
-    jokeList.appendChild(newJokeLi)
+function fetchJoke() {
+  fetch('https://icanhazdadjoke.com/', {
+    headers: {
+      "Accept": "application/json"
+    }
   })
-})
+  .then(res => res.json())
+  .then(jokeData => addJokeToDOM(jokeData))
+}
+
+function addJokeToDOM(jokeData) {
+  const newJokeLi = document.createElement('li')
+  const username = nameInput.value
+  const joke = jokeData.joke
+
+  newJokeLi.innerHTML = `<span class="username">${username} says:</span> ${joke}`
+  jokeList.append(newJokeLi)
+}
